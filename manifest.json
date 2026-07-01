@@ -1,0 +1,19 @@
+{
+  "name": "FitForge — Personal Fitness Coach",
+  "short_name": "FitForge",
+  "description": "AI-powered gym & wellness tracker. Log workouts, meals, water, and body weight with personalised coaching.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237c3aed'/><text y='75' x='10' font-size='70'>⚡</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

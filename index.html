@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="FitForge – AI-powered gym & wellness tracker. Log workouts, meals, water intake, and body weight with intelligent coaching suggestions.">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FitForge">
+  <title>FitForge — Your Personal Fitness Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Animated Background Orbs -->
+  <div class="bg-container" aria-hidden="true">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+  </div>
+
+  <!-- ===================== ONBOARDING ===================== -->
+  <div class="onboarding-overlay" id="onboarding-overlay">
+    <div class="onboarding-card">
+      <div class="onboarding-steps">
+        <!-- Step 1: Welcome -->
+        <div class="ob-step active" id="ob-step-1">
+          <div class="ob-emoji">⚡</div>
+          <h1>Welcome to<br><span class="gradient-text">FitForge</span></h1>
+          <p class="ob-subtitle">Your AI-powered gym & wellness companion. Track workouts, meals, and habits — get smarter every day.</p>
+          <button class="btn btn-primary btn-full btn-lg" onclick="nextObStep(2)">Get Started →</button>
+        </div>
+        <!-- Step 2: Personal Info -->
+        <div class="ob-step" id="ob-step-2">
+          <h2>Tell us about yourself</h2>
+          <p class="ob-subtitle">We'll use this to calculate your nutrition targets.</p>
+          <div class="form-group">
+            <label for="ob-name">Your Name</label>
+            <input type="text" id="ob-name" placeholder="e.g. Kunal" autocomplete="given-name">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ob-age">Age</label>
+              <input type="number" id="ob-age" placeholder="25" min="13" max="100">
+            </div>
+            <div class="form-group">
+              <label for="ob-gender">Gender</label>
+              <select id="ob-gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="label-with-toggle">
+              <label>Height</label>
+              <div class="unit-toggle-btns">
+                <button class="unit-opt active" id="ob-unit-cm" onclick="setHeightUnit('cm','ob')">cm</button>
+                <button class="unit-opt" id="ob-unit-ftin" onclick="setHeightUnit('ftin','ob')">ft / in</button>
+              </div>
+            </div>
+            <div id="ob-cm-wrap">
+              <input type="number" id="ob-height" placeholder="175" min="100" max="250">
+            </div>
+            <div id="ob-ftin-wrap" class="height-ftin-row hidden-field">
+              <input type="number" id="ob-height-ft" placeholder="5" min="3" max="8">
+              <span class="unit-label">ft</span>
+              <input type="number" id="ob-height-in" placeholder="9" min="0" max="11">
+              <span class="unit-label">in</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="ob-weight">Weight (kg)</label>
+            <input type="number" id="ob-weight" placeholder="75" min="30" max="300" step="0.1">
+          </div>
+          <div class="ob-buttons">
+            <button class="btn btn-ghost" onclick="nextObStep(1)">← Back</button>
+            <button class="btn btn-primary" onclick="nextObStep(3)">Next →</button>
+          </div>
+        </div>
+        <!-- Step 3: Goal -->
+        <div class="ob-step" id="ob-step-3">
+          <h2>What's your goal?</h2>
+          <p class="ob-subtitle">This shapes your calorie and macro targets.</p>
+          <div class="goal-options" id="goal-options">
+            <button class="goal-option" data-goal="lose_weight" onclick="selectGoal(this)">
+              <span class="goal-icon">🔥</span>
+              <span class="goal-title">Lose Weight</span>
+              <span class="goal-desc">Burn fat, get lean</span>
+            </button>
+            <button class="goal-option" data-goal="build_muscle" onclick="selectGoal(this)">
+              <span class="goal-icon">💪</span>
+              <span class="goal-title">Build Muscle</span>
+              <span class="goal-desc">Gain strength & size</span>
+            </button>
+            <button class="goal-option" data-goal="maintain" onclick="selectGoal(this)">
+              <span class="goal-icon">⚖️</span>
+              <span class="goal-title">Maintain</span>
+              <span class="goal-desc">Stay fit & healthy</span>
+            </button>
+            <button class="goal-option" data-goal="athletic" onclick="selectGoal(this)">
+              <span class="goal-icon">🏆</span>
+              <span class="goal-title">Athletic</span>
+              <span class="goal-desc">Performance & power</span>
+            </button>
+          </div>
+          <div class="ob-buttons">
+            <button class="btn btn-ghost" onclick="nextObStep(2)">← Back</button>
+            <button class="btn btn-primary" onclick="nextObStep(4)">Next →</button>
+          </div>
+        </div>
+        <!-- Step 4: Activity Level -->
+        <div class="ob-step" id="ob-step-4">
+          <h2>How active are you?</h2>
+          <p class="ob-subtitle">Be honest — this affects your daily calorie calculation.</p>
+          <div class="activity-options" id="activity-options">
+            <button class="activity-option" data-activity="sedentary" onclick="selectActivity(this)">
+              <span class="activity-icon">🛋️</span>
+              <div><span>Sedentary</span><small>Little to no exercise</small></div>
+            </button>
+            <button class="activity-option" data-activity="light" onclick="selectActivity(this)">
+              <span class="activity-icon">🚶</span>
+              <div><span>Lightly Active</span><small>1–2 days/week</small></div>
+            </button>
+            <button class="activity-option" data-activity="moderate" onclick="selectActivity(this)">
+              <span class="activity-icon">🏃</span>
+              <div><span>Moderately Active</span><small>3–4 days/week</small></div>
+            </button>
+            <button class="activity-option" data-activity="active" onclick="selectActivity(this)">
+              <span class="activity-icon">⚡</span>
+              <div><span>Very Active</span><small>5–6 days/week</small></div>
+            </button>
+            <button class="activity-option" data-activity="very_active" onclick="selectActivity(this)">
+              <span class="activity-icon">🔥</span>
+              <div><span>Athlete</span><small>Daily intense training</small></div>
+            </button>
+          </div>
+          <div class="ob-buttons">
+            <button class="btn btn-ghost" onclick="nextObStep(3)">← Back</button>
+            <button class="btn btn-primary btn-lg" onclick="finishOnboarding()">Let's Go! 🚀</button>
+          </div>
+        </div>
+      </div>
+      <!-- Progress dots -->
+      <div class="ob-progress">
+        <div class="ob-dot active" id="ob-dot-1"></div>
+        <div class="ob-dot" id="ob-dot-2"></div>
+        <div class="ob-dot" id="ob-dot-3"></div>
+        <div class="ob-dot" id="ob-dot-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== APP SHELL ===================== -->
+  <div class="app-shell" id="app-shell" style="display:none">
+
+    <!-- Sidebar (desktop) -->
+    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">FitForge</span>
+      </div>
+      <div class="sidebar-links">
+        <a class="nav-link active" data-page="dashboard" id="nav-dashboard" href="#" role="button" aria-current="page">
+          <span class="nav-icon" aria-hidden="true">🏠</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a class="nav-link" data-page="workout" id="nav-workout" href="#" role="button">
+          <span class="nav-icon" aria-hidden="true">🏋️</span>
+          <span class="nav-label">Workout</span>
+        </a>
+        <a class="nav-link" data-page="nutrition" id="nav-nutrition" href="#" role="button">
+          <span class="nav-icon" aria-hidden="true">🥗</span>
+          <span class="nav-label">Nutrition</span>
+        </a>
+        <a class="nav-link" data-page="progress" id="nav-progress" href="#" role="button">
+          <span class="nav-icon" aria-hidden="true">📈</span>
+          <span class="nav-label">Progress</span>
+        </a>
+        <a class="nav-link" data-page="water" id="nav-water" href="#" role="button">
+          <span class="nav-icon" aria-hidden="true">💧</span>
+          <span class="nav-label">Water</span>
+        </a>
+        <a class="nav-link" data-page="coach" id="nav-coach" href="#" role="button">
+          <span class="nav-icon" aria-hidden="true">🤖</span>
+          <span class="nav-label">AI Coach</span>
+          <span class="nav-badge" id="coach-badge" style="display:none">!</span>
+        </a>
+        <a class="nav-link" data-page="profile" id="nav-profile" href="#" role="button">
+          <span class="nav-icon" aria-hidden="true">👤</span>
+          <span class="nav-label">Profile</span>
+        </a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="streak-widget" id="sidebar-streak" onclick="navigate('progress')">
+          <span class="streak-fire">🔥</span>
+          <div>
+            <div class="streak-count" id="sidebar-streak-count">0</div>
+            <div class="streak-label">day streak</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+
+      <!-- ================== DASHBOARD ================== -->
+      <section class="page active" id="page-dashboard" aria-label="Dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="greeting" id="dashboard-greeting">Good Morning! 👋</h1>
+            <p class="date-text" id="dashboard-date"></p>
+          </div>
+          <div class="header-avatar" id="header-avatar" onclick="navigate('profile')" role="button" tabindex="0" aria-label="Go to profile">
+            <span id="header-avatar-initials">?</span>
+          </div>
+        </div>
+        <div class="stats-row" id="dashboard-stats">
+          <div class="stat-card" onclick="navigate('nutrition')" role="button" tabindex="0">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-calories">0</div>
+              <div class="stat-label">Calories</div>
+              <div class="stat-sub" id="stat-calories-goal"></div>
+            </div>
+            <svg class="stat-ring" viewBox="0 0 36 36" aria-hidden="true">
+              <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
+              <circle class="ring-fill ring-calories" id="ring-calories" cx="18" cy="18" r="15.9" stroke-dasharray="0 100"/>
+            </svg>
+          </div>
+          <div class="stat-card" onclick="navigate('water')" role="button" tabindex="0">
+            <div class="stat-icon">💧</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-water">0ml</div>
+              <div class="stat-label">Water</div>
+              <div class="stat-sub" id="stat-water-goal"></div>
+            </div>
+            <svg class="stat-ring" viewBox="0 0 36 36" aria-hidden="true">
+              <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
+              <circle class="ring-fill ring-water" id="ring-water" cx="18" cy="18" r="15.9" stroke-dasharray="0 100"/>
+            </svg>
+          </div>
+          <div class="stat-card" onclick="navigate('workout')" role="button" tabindex="0">
+            <div class="stat-icon">🏋️</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-workouts">0</div>
+              <div class="stat-label">Workouts</div>
+              <div class="stat-sub">this week</div>
+            </div>
+            <svg class="stat-ring" viewBox="0 0 36 36" aria-hidden="true">
+              <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
+              <circle class="ring-fill ring-workout" id="ring-workout" cx="18" cy="18" r="15.9" stroke-dasharray="0 100"/>
+            </svg>
+          </div>
+          <div class="stat-card" onclick="navigate('progress')" role="button" tabindex="0">
+            <div class="stat-icon">⚖️</div>
+            <div class="stat-info">
+              <div class="stat-value" id="stat-weight">– kg</div>
+              <div class="stat-label">Weight</div>
+              <div class="stat-sub" id="stat-weight-change"></div>
+            </div>
+            <svg class="stat-ring" viewBox="0 0 36 36" aria-hidden="true">
+              <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
+              <circle class="ring-fill ring-weight" id="ring-weight" cx="18" cy="18" r="15.9" stroke-dasharray="0 100"/>
+            </svg>
+          </div>
+        </div>
+        <!-- Context-Aware Check-In Banner -->
+        <div class="checkin-banner" id="checkin-banner" style="display:none;">
+          <span class="checkin-icon" id="checkin-icon">💡</span>
+          <div class="checkin-body">
+            <div class="checkin-msg" id="checkin-msg">Loading...</div>
+            <button class="checkin-action" id="checkin-action">Take Action →</button>
+          </div>
+          <button class="checkin-dismiss" onclick="document.getElementById('checkin-banner').style.display='none'" aria-label="Dismiss">✕</button>
+        </div>
+        <!-- Coach Tip -->
+        <div class="coach-tip-card" id="dashboard-coach-tip" onclick="navigate('coach')" role="button" tabindex="0">
+          <div class="coach-tip-header">
+            <span class="coach-tip-icon">🤖</span>
+            <span class="coach-tip-title">AI Coach Tip</span>
+            <span class="coach-tip-arrow">→</span>
+          </div>
+          <p class="coach-tip-text" id="coach-tip-text">Tap to see your personalised insights...</p>
+        </div>
+        <!-- Quick Actions -->
+        <div class="quick-actions-section">
+          <h3 class="section-title">Quick Actions</h3>
+          <div class="action-grid">
+            <button class="action-btn" id="qa-workout" onclick="navigate('workout')">
+              <span class="action-icon">🏋️</span>
+              <span>Log Workout</span>
+            </button>
+            <button class="action-btn" id="qa-meal" onclick="navigate('nutrition')">
+              <span class="action-icon">🥗</span>
+              <span>Add Meal</span>
+            </button>
+            <button class="action-btn" id="qa-water" onclick="quickAddWater500()">
+              <span class="action-icon">💧</span>
+              <span>+500ml Water</span>
+            </button>
+            <button class="action-btn" id="qa-weight" onclick="openWeightModal()">
+              <span class="action-icon">⚖️</span>
+              <span>Log Weight</span>
+            </button>
+          </div>
+        </div>
+        <!-- Today's Plan -->
+        <div class="todays-plan-section">
+          <h3 class="section-title">Today's Plan</h3>
+          <div class="plan-list" id="todays-plan-list">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+        <!-- Recent Workout -->
+        <div class="recent-section">
+          <h3 class="section-title">Last Workout</h3>
+          <div id="recent-workout-content">
+            <div class="empty-state-inline">No workouts logged yet. Start your first session! 💪</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================== WORKOUT ================== -->
+      <section class="page" id="page-workout" aria-label="Workout tracker">
+        <div class="page-header">
+          <div>
+            <h1>Workout</h1>
+            <div class="date-nav">
+              <button class="date-nav-btn" id="workout-prev-btn" aria-label="Previous day">‹</button>
+              <span class="date-nav-label" id="workout-date-label"></span>
+              <button class="date-nav-btn" id="workout-next-btn" aria-label="Next day">›</button>
+            </div>
+          </div>
+          <div class="workout-header-actions">
+            <button class="btn btn-secondary" onclick="promptSaveTemplate()">Save Template</button>
+            <button class="btn btn-success" onclick="saveWorkout()">Save ✓</button>
+          </div>
+        </div>
+        <div id="workout-exercises-container">
+          <div class="empty-state" id="workout-empty">
+            <div class="empty-icon">🏋️</div>
+            <p>No exercises yet. Add one below!</p>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-full add-exercise-btn" onclick="openExercisePicker()">
+          + Add Exercise
+        </button>
+        <!-- Templates -->
+        <div class="templates-section">
+          <h3 class="section-title">Quick Start Templates</h3>
+          <div class="templates-grid">
+            <button class="template-btn" onclick="loadTemplate('push')">💪 Push Day</button>
+            <button class="template-btn" onclick="loadTemplate('pull')">🏋️ Pull Day</button>
+            <button class="template-btn" onclick="loadTemplate('legs')">🦵 Leg Day</button>
+            <button class="template-btn" onclick="loadTemplate('upper')">🔝 Upper Body</button>
+            <button class="template-btn" onclick="loadTemplate('full')">⚡ Full Body</button>
+            <button class="template-btn" onclick="loadTemplate('cardio')">🏃 Cardio</button>
+          </div>
+        </div>
+        <!-- History -->
+        <div class="glass-card">
+          <h3 class="card-title">Recent Workouts</h3>
+          <div id="workout-history-list">
+            <div class="empty-state-inline">No workout history yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================== NUTRITION ================== -->
+      <section class="page" id="page-nutrition" aria-label="Nutrition tracker">
+        <div class="page-header">
+          <div>
+            <h1>Nutrition</h1>
+            <p class="date-text" id="nutrition-date"></p>
+          </div>
+          <button class="btn btn-primary" onclick="openMealModal()">+ Add Meal</button>
+        </div>
+        <!-- Macro Rings -->
+        <div class="macro-rings-grid" id="macro-rings-grid">
+          <div class="macro-ring-card">
+            <div class="macro-ring-wrap">
+              <svg class="macro-svg" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="macro-ring-bg" cx="60" cy="60" r="50"/>
+                <circle class="macro-ring-fill calories-fill" id="cal-ring" cx="60" cy="60" r="50" stroke-dasharray="0 314"/>
+              </svg>
+              <div class="macro-ring-center">
+                <div class="macro-value" id="cal-value">0</div>
+                <div class="macro-unit">kcal</div>
+              </div>
+            </div>
+            <div class="macro-ring-label">Calories</div>
+            <div class="macro-target-text" id="cal-target">/ – kcal</div>
+          </div>
+          <div class="macro-ring-card">
+            <div class="macro-ring-wrap">
+              <svg class="macro-svg" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="macro-ring-bg" cx="60" cy="60" r="50"/>
+                <circle class="macro-ring-fill protein-fill" id="prot-ring" cx="60" cy="60" r="50" stroke-dasharray="0 314"/>
+              </svg>
+              <div class="macro-ring-center">
+                <div class="macro-value" id="prot-value">0g</div>
+                <div class="macro-unit">protein</div>
+              </div>
+            </div>
+            <div class="macro-ring-label">Protein</div>
+            <div class="macro-target-text" id="prot-target">/ – g</div>
+          </div>
+          <div class="macro-ring-card">
+            <div class="macro-ring-wrap">
+              <svg class="macro-svg" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="macro-ring-bg" cx="60" cy="60" r="50"/>
+                <circle class="macro-ring-fill carbs-fill" id="carbs-ring" cx="60" cy="60" r="50" stroke-dasharray="0 314"/>
+              </svg>
+              <div class="macro-ring-center">
+                <div class="macro-value" id="carbs-value">0g</div>
+                <div class="macro-unit">carbs</div>
+              </div>
+            </div>
+            <div class="macro-ring-label">Carbs</div>
+            <div class="macro-target-text" id="carbs-target">/ – g</div>
+          </div>
+          <div class="macro-ring-card">
+            <div class="macro-ring-wrap">
+              <svg class="macro-svg" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="macro-ring-bg" cx="60" cy="60" r="50"/>
+                <circle class="macro-ring-fill fat-fill" id="fat-ring" cx="60" cy="60" r="50" stroke-dasharray="0 314"/>
+              </svg>
+              <div class="macro-ring-center">
+                <div class="macro-value" id="fat-value">0g</div>
+                <div class="macro-unit">fat</div>
+              </div>
+            </div>
+            <div class="macro-ring-label">Fat</div>
+            <div class="macro-target-text" id="fat-target">/ – g</div>
+          </div>
+        </div>
+        <!-- Meal Type Tabs -->
+        <div class="meal-tabs">
+          <button class="meal-tab active" data-meal-type="all" onclick="filterMeals('all', this)">All</button>
+          <button class="meal-tab" data-meal-type="breakfast" onclick="filterMeals('breakfast', this)">🌅 Breakfast</button>
+          <button class="meal-tab" data-meal-type="lunch" onclick="filterMeals('lunch', this)">☀️ Lunch</button>
+          <button class="meal-tab" data-meal-type="dinner" onclick="filterMeals('dinner', this)">🌙 Dinner</button>
+          <button class="meal-tab" data-meal-type="snack" onclick="filterMeals('snack', this)">🍎 Snack</button>
+        </div>
+        <div id="meal-list">
+          <div class="empty-state" id="nutrition-empty">
+            <div class="empty-icon">🥗</div>
+            <p>No meals logged today. Start eating! 😄</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================== PROGRESS ================== -->
+      <section class="page" id="page-progress" aria-label="Progress tracker">
+        <div class="page-header">
+          <h1>Progress</h1>
+          <button class="btn btn-outline" onclick="openWeightModal()">+ Log Weight</button>
+        </div>
+        <!-- Stats Row -->
+        <div class="progress-mini-stats">
+          <div class="glass-card mini-stat-card" onclick="navigate('workout')">
+            <div class="mini-stat-icon">🔥</div>
+            <div class="mini-stat-value" id="workout-streak">0</div>
+            <div class="mini-stat-label">Day Streak</div>
+          </div>
+          <div class="glass-card mini-stat-card" onclick="navigate('workout')">
+            <div class="mini-stat-icon">📅</div>
+            <div class="mini-stat-value" id="total-workouts">0</div>
+            <div class="mini-stat-label">Total Workouts</div>
+          </div>
+          <div class="glass-card mini-stat-card">
+            <div class="mini-stat-icon">🏆</div>
+            <div class="mini-stat-value" id="total-prs">0</div>
+            <div class="mini-stat-label">Personal Records</div>
+          </div>
+        </div>
+        <!-- Weight Chart -->
+        <div class="glass-card">
+          <div class="card-header-row">
+            <h3 class="card-title">Body Weight (kg)</h3>
+            <div class="period-tabs">
+              <button class="period-tab active" onclick="setWeightPeriod(14, this)">2W</button>
+              <button class="period-tab" onclick="setWeightPeriod(30, this)">1M</button>
+              <button class="period-tab" onclick="setWeightPeriod(90, this)">3M</button>
+            </div>
+          </div>
+          <div id="weight-chart-container" class="chart-container">
+            <div class="empty-state">
+              <div class="empty-icon">📈</div>
+              <p>Log your weight daily to see your trend</p>
+            </div>
+          </div>
+        </div>
+        <!-- Personal Records -->
+        <div class="glass-card">
+          <h3 class="card-title">Personal Records 🏆</h3>
+          <div id="pr-list">
+            <div class="empty-state-inline">Start logging workouts to track your PRs!</div>
+          </div>
+        </div>
+        <!-- Workout Frequency Chart -->
+        <div class="glass-card">
+          <h3 class="card-title">Workout Frequency (last 4 weeks)</h3>
+          <div id="frequency-chart" class="chart-container"></div>
+        </div>
+      </section>
+
+      <!-- ================== WATER ================== -->
+      <section class="page" id="page-water" aria-label="Water intake tracker">
+        <div class="page-header">
+          <h1>Hydration 💧</h1>
+          <p class="date-text" id="water-date"></p>
+        </div>
+        <!-- Water Glass Visualization -->
+        <div class="water-glass-section">
+          <div class="water-glass-wrap">
+            <div class="water-glass" id="water-glass" aria-label="Water level" role="progressbar">
+              <div class="water-fill-container" id="water-fill-container">
+                <div class="water-waves-container">
+                  <svg class="water-wave-svg" viewBox="0 0 300 50" preserveAspectRatio="none">
+                    <path class="wave-path wave-path-1" d="M0,25 C50,10 100,40 150,25 C200,10 250,40 300,25 L300,50 L0,50 Z"/>
+                    <path class="wave-path wave-path-2" d="M0,30 C60,15 120,45 180,30 C240,15 270,45 300,30 L300,50 L0,50 Z"/>
+                  </svg>
+                </div>
+                <div class="water-fill-body" id="water-fill-body"></div>
+              </div>
+              <div class="water-glass-label">
+                <div class="water-amount-big" id="water-amount-display">0</div>
+                <div class="water-amount-unit">ml</div>
+              </div>
+            </div>
+            <div class="water-glass-info">
+              <div class="water-pct-big" id="water-pct">0%</div>
+              <div class="water-goal-text" id="water-goal-text">of daily goal</div>
+              <div class="water-remaining-text" id="water-remaining"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Quick Add -->
+        <div>
+          <h3 class="section-title">Quick Add</h3>
+          <div class="water-btn-grid">
+            <button class="water-btn" onclick="addWater(250)">
+              <span class="water-btn-icon">🥤</span>
+              <span class="water-btn-amount">250ml</span>
+              <span class="water-btn-desc">Small glass</span>
+            </button>
+            <button class="water-btn" onclick="addWater(350)">
+              <span class="water-btn-icon">🥛</span>
+              <span class="water-btn-amount">350ml</span>
+              <span class="water-btn-desc">Medium glass</span>
+            </button>
+            <button class="water-btn" onclick="addWater(500)">
+              <span class="water-btn-icon">🍶</span>
+              <span class="water-btn-amount">500ml</span>
+              <span class="water-btn-desc">Bottle half</span>
+            </button>
+            <button class="water-btn" onclick="addWater(750)">
+              <span class="water-btn-icon">🧴</span>
+              <span class="water-btn-amount">750ml</span>
+              <span class="water-btn-desc">Large bottle</span>
+            </button>
+            <button class="water-btn" onclick="addWater(1000)">
+              <span class="water-btn-icon">🪣</span>
+              <span class="water-btn-amount">1 Litre</span>
+              <span class="water-btn-desc">Full bottle</span>
+            </button>
+            <button class="water-btn water-btn-custom" onclick="openCustomWater()">
+              <span class="water-btn-icon">✏️</span>
+              <span class="water-btn-amount">Custom</span>
+              <span class="water-btn-desc">Enter amount</span>
+            </button>
+          </div>
+        </div>
+        <!-- Today's Log -->
+        <div class="glass-card">
+          <div class="card-header-row">
+            <h3 class="card-title">Today's Log</h3>
+            <button class="btn-icon-sm" onclick="resetWaterToday()" title="Reset today's water" aria-label="Reset water log">🔄</button>
+          </div>
+          <div id="water-log-list">
+            <div class="empty-state-inline" id="water-log-empty">No water logged yet today.</div>
+          </div>
+        </div>
+        <!-- Weekly Chart -->
+        <div class="glass-card">
+          <h3 class="card-title">This Week's Hydration</h3>
+          <div id="water-week-chart" class="chart-container"></div>
+        </div>
+      </section>
+
+      <!-- ================== AI COACH ================== -->
+      <section class="page" id="page-coach" aria-label="AI Coach">
+        <div class="page-header">
+          <div>
+            <h1>AI Coach 🤖</h1>
+            <p class="date-text">Personalised insights from your data</p>
+          </div>
+          <button class="btn btn-outline" onclick="renderCoach()">Refresh ↺</button>
+        </div>
+        <!-- Health Score -->
+        <div class="health-score-card glass-card">
+          <div class="health-score-ring-wrap">
+            <svg viewBox="0 0 120 120" class="score-svg" aria-label="Health score">
+              <circle class="score-ring-bg" cx="60" cy="60" r="50"/>
+              <circle class="score-ring-fill" id="score-ring" cx="60" cy="60" r="50" stroke-dasharray="0 314"/>
+            </svg>
+            <div class="score-center-text">
+              <div class="score-number" id="score-value">–</div>
+              <div class="score-grade" id="score-grade">–</div>
+            </div>
+          </div>
+          <div class="health-score-breakdown">
+            <h3>Weekly Health Score</h3>
+            <div class="score-bar-item">
+              <span>🏋️ Consistency</span>
+              <div class="score-bar"><div class="score-bar-fill consistency-fill" id="score-consistency" style="width:0%"></div></div>
+              <span class="score-bar-pct" id="score-consistency-val">0%</span>
+            </div>
+            <div class="score-bar-item">
+              <span>🥗 Nutrition</span>
+              <div class="score-bar"><div class="score-bar-fill nutrition-fill" id="score-nutrition" style="width:0%"></div></div>
+              <span class="score-bar-pct" id="score-nutrition-val">0%</span>
+            </div>
+            <div class="score-bar-item">
+              <span>💧 Hydration</span>
+              <div class="score-bar"><div class="score-bar-fill hydration-fill" id="score-hydration" style="width:0%"></div></div>
+              <span class="score-bar-pct" id="score-hydration-val">0%</span>
+            </div>
+            <div class="score-bar-item">
+              <span>⚖️ Weight Log</span>
+              <div class="score-bar"><div class="score-bar-fill weight-fill" id="score-weight" style="width:0%"></div></div>
+              <span class="score-bar-pct" id="score-weight-val">0%</span>
+            </div>
+          </div>
+        </div>
+        <!-- Today's Suggestion -->
+        <div class="glass-card suggestion-card" id="workout-suggestion">
+          <h3 class="card-title">💡 What to Train Today</h3>
+          <div id="suggestion-content">Analysing your workout history...</div>
+        </div>
+        <!-- Insights List -->
+        <div>
+          <h3 class="section-title">Active Insights</h3>
+          <div id="insights-list">
+            <div class="loading-pulse">
+              <div class="pulse-bar"></div>
+              <div class="pulse-bar" style="width:80%"></div>
+              <div class="pulse-bar" style="width:60%"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Muscle Recovery -->
+        <div class="glass-card">
+          <h3 class="card-title">Muscle Recovery Status</h3>
+          <div id="muscle-recovery" class="muscle-grid"></div>
+        </div>
+      </section>
+
+      <!-- ================== PROFILE ================== -->
+      <section class="page" id="page-profile" aria-label="Profile and settings">
+        <div class="page-header">
+          <h1>Profile</h1>
+          <button class="btn btn-primary" onclick="saveProfile()">Save ✓</button>
+        </div>
+        <!-- Profile Hero -->
+        <div class="profile-hero">
+          <div class="profile-avatar-big" id="profile-avatar">
+            <span id="profile-avatar-initials">?</span>
+          </div>
+          <div class="profile-hero-info">
+            <h2 id="profile-name-display">Your Name</h2>
+            <span class="goal-badge" id="profile-goal-badge">Goal not set</span>
+          </div>
+        </div>
+        <!-- TDEE Card -->
+        <div class="tdee-card glass-card">
+          <h3 class="card-title">Nutrition Targets</h3>
+          <div class="tdee-stats-row">
+            <div class="tdee-stat">
+              <div class="tdee-value" id="tdee-display">–</div>
+              <div class="tdee-label">TDEE (kcal)</div>
+            </div>
+            <div class="tdee-stat">
+              <div class="tdee-value" id="tdee-target-display">–</div>
+              <div class="tdee-label">Daily Target</div>
+            </div>
+            <div class="tdee-stat">
+              <div class="tdee-value" id="bmr-display">–</div>
+              <div class="tdee-label">BMR (kcal)</div>
+            </div>
+          </div>
+          <div class="macro-pills-row">
+            <div class="macro-pill protein-pill">
+              <span id="profile-protein">– g</span>
+              <small>Protein</small>
+            </div>
+            <div class="macro-pill carbs-pill">
+              <span id="profile-carbs">– g</span>
+              <small>Carbs</small>
+            </div>
+            <div class="macro-pill fat-pill">
+              <span id="profile-fat">– g</span>
+              <small>Fat</small>
+            </div>
+          </div>
+        </div>
+        <!-- Personal Info Form -->
+        <div class="glass-card">
+          <h3 class="card-title">Personal Information</h3>
+          <div class="form-group">
+            <label for="profile-name">Name</label>
+            <input type="text" id="profile-name" placeholder="Your name" autocomplete="given-name">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="profile-age">Age</label>
+              <input type="number" id="profile-age" placeholder="25" min="13" max="100">
+            </div>
+            <div class="form-group">
+              <label for="profile-gender">Gender</label>
+              <select id="profile-gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="label-with-toggle">
+              <label>Height</label>
+              <div class="unit-toggle-btns">
+                <button class="unit-opt active" id="profile-unit-cm" onclick="setHeightUnit('cm','profile')">cm</button>
+                <button class="unit-opt" id="profile-unit-ftin" onclick="setHeightUnit('ftin','profile')">ft / in</button>
+              </div>
+            </div>
+            <div id="profile-cm-wrap">
+              <input type="number" id="profile-height-cm" placeholder="175" min="100" max="250">
+            </div>
+            <div id="profile-ftin-wrap" class="height-ftin-row hidden-field">
+              <input type="number" id="profile-height-ft" placeholder="5" min="3" max="8">
+              <span class="unit-label">ft</span>
+              <input type="number" id="profile-height-in" placeholder="9" min="0" max="11">
+              <span class="unit-label">in</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="profile-weight-form">Weight (kg)</label>
+            <input type="number" id="profile-weight-form" placeholder="75" min="30" max="300" step="0.1">
+          </div>
+        </div>
+        <!-- Goals & Activity -->
+        <div class="glass-card">
+          <h3 class="card-title">Goals & Activity Level</h3>
+          <div class="form-group">
+            <label for="profile-goal">Primary Goal</label>
+            <select id="profile-goal">
+              <option value="lose_weight">🔥 Lose Weight</option>
+              <option value="build_muscle">💪 Build Muscle</option>
+              <option value="maintain">⚖️ Maintain Weight</option>
+              <option value="athletic">🏆 Athletic Performance</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="profile-activity">Activity Level</label>
+            <select id="profile-activity">
+              <option value="sedentary">🛋️ Sedentary (desk job, no exercise)</option>
+              <option value="light">🚶 Lightly Active (1–2 days/week)</option>
+              <option value="moderate">🏃 Moderately Active (3–4 days/week)</option>
+              <option value="active">⚡ Very Active (5–6 days/week)</option>
+              <option value="very_active">🔥 Athlete (daily intense training)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="profile-water-goal">Daily Water Goal (ml)</label>
+            <input type="number" id="profile-water-goal" placeholder="2500" min="500" max="6000" step="100">
+          </div>
+        </div>
+        <!-- Workout Schedule -->
+        <div class="glass-card">
+          <h3 class="card-title">Weekly Schedule</h3>
+          <p class="text-muted" style="margin-bottom: 12px; font-size: 0.85rem; color: var(--text-muted);">Set your default split for auto-loading workouts.</p>
+          <div class="schedule-grid">
+            <div class="form-group"><label style="font-size:0.75rem;">Monday</label><select id="sched-1"><option value="push">Push</option><option value="pull">Pull</option><option value="legs">Legs</option><option value="upper">Upper Body</option><option value="lower">Lower Body</option><option value="full">Full Body</option><option value="cardio">Cardio</option><option value="rest">Rest Day</option></select></div>
+            <div class="form-group"><label style="font-size:0.75rem;">Tuesday</label><select id="sched-2"><option value="push">Push</option><option value="pull">Pull</option><option value="legs">Legs</option><option value="upper">Upper Body</option><option value="lower">Lower Body</option><option value="full">Full Body</option><option value="cardio">Cardio</option><option value="rest">Rest Day</option></select></div>
+            <div class="form-group"><label style="font-size:0.75rem;">Wednesday</label><select id="sched-3"><option value="push">Push</option><option value="pull">Pull</option><option value="legs">Legs</option><option value="upper">Upper Body</option><option value="lower">Lower Body</option><option value="full">Full Body</option><option value="cardio">Cardio</option><option value="rest">Rest Day</option></select></div>
+            <div class="form-group"><label style="font-size:0.75rem;">Thursday</label><select id="sched-4"><option value="push">Push</option><option value="pull">Pull</option><option value="legs">Legs</option><option value="upper">Upper Body</option><option value="lower">Lower Body</option><option value="full">Full Body</option><option value="cardio">Cardio</option><option value="rest">Rest Day</option></select></div>
+            <div class="form-group"><label style="font-size:0.75rem;">Friday</label><select id="sched-5"><option value="push">Push</option><option value="pull">Pull</option><option value="legs">Legs</option><option value="upper">Upper Body</option><option value="lower">Lower Body</option><option value="full">Full Body</option><option value="cardio">Cardio</option><option value="rest">Rest Day</option></select></div>
+            <div class="form-group"><label style="font-size:0.75rem;">Saturday</label><select id="sched-6"><option value="push">Push</option><option value="pull">Pull</option><option value="legs">Legs</option><option value="upper">Upper Body</option><option value="lower">Lower Body</option><option value="full">Full Body</option><option value="cardio">Cardio</option><option value="rest">Rest Day</option></select></div>
+            <div class="form-group"><label style="font-size:0.75rem;">Sunday</label><select id="sched-0"><option value="push">Push</option><option value="pull">Pull</option><option value="legs">Legs</option><option value="upper">Upper Body</option><option value="lower">Lower Body</option><option value="full">Full Body</option><option value="cardio">Cardio</option><option value="rest">Rest Day</option></select></div>
+          </div>
+        </div>
+        <!-- Data Actions -->
+        <div class="glass-card">
+          <h3 class="card-title">App Data</h3>
+          <div class="app-actions-grid">
+            <button class="btn btn-outline" onclick="exportData()">📤 Export Data (JSON)</button>
+            <button class="btn btn-danger-outline" onclick="confirmClearData()">🗑️ Clear All Data</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===================== BOTTOM NAV (Mobile) ===================== -->
+  <nav class="bottom-nav" id="bottom-nav" style="display:none" role="navigation" aria-label="Mobile navigation">
+    <a class="bnav-item active" data-page="dashboard" id="bnav-dashboard" href="#" role="button">
+      <span class="bnav-icon" aria-hidden="true">🏠</span>
+      <span class="bnav-label">Home</span>
+    </a>
+    <a class="bnav-item" data-page="workout" id="bnav-workout" href="#" role="button">
+      <span class="bnav-icon" aria-hidden="true">🏋️</span>
+      <span class="bnav-label">Workout</span>
+    </a>
+    <a class="bnav-item" data-page="nutrition" id="bnav-nutrition" href="#" role="button">
+      <span class="bnav-icon" aria-hidden="true">🥗</span>
+      <span class="bnav-label">Nutrition</span>
+    </a>
+    <a class="bnav-item" data-page="water" id="bnav-water" href="#" role="button">
+      <span class="bnav-icon" aria-hidden="true">💧</span>
+      <span class="bnav-label">Water</span>
+    </a>
+    <a class="bnav-item" data-page="coach" id="bnav-coach" href="#" role="button">
+      <span class="bnav-icon" aria-hidden="true">🤖</span>
+      <span class="bnav-label">Coach</span>
+    </a>
+    <a class="bnav-item" data-page="profile" id="bnav-profile" href="#" role="button">
+      <span class="bnav-icon" aria-hidden="true">👤</span>
+      <span class="bnav-label">Me</span>
+    </a>
+  </nav>
+
+  <!-- ===================== MODALS ===================== -->
+
+  <!-- Single shared backdrop — clicking it closes any open modal -->
+  <div id="modal-backdrop" aria-hidden="true"></div>
+
+  <!-- Exercise Picker Modal -->
+  <div class="modal modal-tall" id="exercise-modal" role="dialog" aria-modal="true" aria-label="Choose an exercise">
+    <div class="modal-header">
+      <h2>Choose Exercise</h2>
+      <button class="modal-close-btn" id="close-exercise-modal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="exercise-search" placeholder="Search exercises..." oninput="filterExercises(this.value)" autocomplete="off">
+    </div>
+<style>
+.exercise-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.exercise-card-img {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--bg-sec);
+  flex-shrink: 0;
+}
+.exercise-card-title {
+  font-weight: 600;
+}
+</style>
+    <div class="exercise-cat-tabs" id="exercise-cat-tabs"></div>
+    <div class="exercise-list-scroll" id="exercise-list"></div>
+  </div>
+
+  <!-- Meal Logger Modal -->
+  <!-- Meal / Food Logger Modal (Smart Search) -->
+  <div class="modal modal-tall" id="meal-modal" role="dialog" aria-modal="true" aria-label="Log a meal">
+    <div class="modal-header">
+      <h2>Log Food</h2>
+      <button class="modal-close-btn" id="close-meal-modal" aria-label="Close">✕</button>
+    </div>
+    <!-- Mode Toggle -->
+    <div class="meal-mode-toggle">
+      <button class="meal-mode-btn active" id="mode-search-btn" onclick="setMealMode('search')">🔍 Search Food</button>
+      <button class="meal-mode-btn" id="mode-manual-btn" onclick="setMealMode('manual')">✏️ Manual Entry</button>
+    </div>
+
+    <!-- SEARCH MODE -->
+    <div id="meal-search-mode">
+      <div class="modal-search-bar">
+        <span class="search-icon">🍽️</span>
+        <input type="text" id="food-search-input" placeholder="Search: dal, chicken, maggi..." oninput="onFoodSearch(this.value)" autocomplete="off">
+      </div>
+      <!-- Category quick-filter -->
+      <div class="food-cat-scroll" id="food-cat-tabs">
+        <!-- Injected by JS -->
+      </div>
+      <!-- Search results / recent -->
+      <div class="food-results-list" id="food-results-list">
+        <!-- Injected by JS -->
+      </div>
+      <!-- Selected food + portion picker (hidden until food is chosen) -->
+      <div class="food-portion-panel" id="food-portion-panel" style="display:none;">
+        <div class="portion-food-name" id="portion-food-name">–</div>
+        <div class="portion-food-base" id="portion-food-base">Base portion: –</div>
+        <div class="portion-scaled-macros" id="portion-scaled-macros"></div>
+        <div class="portion-scale-row">
+          <label>Portions:</label>
+          <div class="portion-btn-group" id="portion-btn-group">
+            <button class="portion-scale-btn" data-mult="0.5" onclick="selectPortion(0.5)">½</button>
+            <button class="portion-scale-btn active" data-mult="1" onclick="selectPortion(1)">1×</button>
+            <button class="portion-scale-btn" data-mult="1.5" onclick="selectPortion(1.5)">1½×</button>
+            <button class="portion-scale-btn" data-mult="2" onclick="selectPortion(2)">2×</button>
+            <button class="portion-scale-btn" data-mult="3" onclick="selectPortion(3)">3×</button>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:10px;">
+          <label for="food-meal-type">Meal Type</label>
+          <select id="food-meal-type" class="form-select">
+            <option value="breakfast">🌅 Breakfast</option>
+            <option value="lunch">☀️ Lunch</option>
+            <option value="dinner">🌙 Dinner</option>
+            <option value="snack">🍎 Snack</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="logSelectedFood()">Log It ✓</button>
+        <button class="btn btn-ghost btn-full" onclick="clearFoodSelection()" style="margin-top:6px;">← Back to search</button>
+      </div>
+    </div>
+
+    <!-- MANUAL MODE -->
+    <div id="meal-manual-mode" style="display:none;">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="meal-name">Food / Meal Name</label>
+          <input type="text" id="meal-name" placeholder="e.g. Mom's Dal Tadka">
+        </div>
+        <div class="form-group">
+          <label for="meal-type-select">Meal Type</label>
+          <select id="meal-type-select">
+            <option value="breakfast">🌅 Breakfast</option>
+            <option value="lunch">☀️ Lunch</option>
+            <option value="dinner">🌙 Dinner</option>
+            <option value="snack">🍎 Snack</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="meal-calories">Calories (kcal)</label>
+            <input type="number" id="meal-calories" placeholder="450" min="0">
+          </div>
+          <div class="form-group">
+            <label for="meal-protein">Protein (g)</label>
+            <input type="number" id="meal-protein" placeholder="35" min="0" step="0.1">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="meal-carbs">Carbs (g)</label>
+            <input type="number" id="meal-carbs" placeholder="50" min="0" step="0.1">
+          </div>
+          <div class="form-group">
+            <label for="meal-fat">Fat (g)</label>
+            <input type="number" id="meal-fat" placeholder="12" min="0" step="0.1">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="saveMeal()">Log Meal 🥗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Save Prompt Modal -->
+  <div class="modal" id="template-modal" role="dialog" aria-labelledby="template-modal-title">
+    <button class="modal-close" id="close-template-modal" aria-label="Close">✕</button>
+    <div class="modal-header">
+      <h3 id="template-modal-title">Save as Template</h3>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom: 15px; font-size: 0.95rem; color: var(--text-sec);">
+        Overwrite a default template with your current exercise list?
+      </p>
+      <div class="input-group">
+        <label for="template-select">Select Template</label>
+        <select id="template-select" class="form-input">
+          <option value="push">Push Day</option>
+          <option value="pull">Pull Day</option>
+          <option value="legs">Leg Day</option>
+          <option value="upper">Upper Body</option>
+          <option value="full">Full Body</option>
+          <option value="cardio">Cardio</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveAsTemplate()">Save Template</button>
+    </div>
+  </div>
+
+  <!-- Weight Logger Modal -->
+  <div class="modal modal-sm" id="weight-modal" role="dialog" aria-modal="true" aria-label="Log body weight">
+    <div class="modal-header">
+      <h2>Log Weight</h2>
+      <button class="modal-close-btn" id="close-weight-modal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="weight-input">Your Weight (kg)</label>
+        <input type="number" id="weight-input" placeholder="75.0" min="30" max="300" step="0.1">
+      </div>
+      <div class="form-group">
+        <label for="weight-date-input">Date</label>
+        <input type="date" id="weight-date-input">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveWeight()">Save Weight ⚖️</button>
+    </div>
+  </div>
+
+  <!-- Custom Water Modal -->
+  <div class="modal modal-sm" id="water-custom-modal" role="dialog" aria-modal="true" aria-label="Custom water amount">
+    <div class="modal-header">
+      <h2>Add Water 💧</h2>
+      <button class="modal-close-btn" id="close-water-modal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="water-custom-input">Amount (ml)</label>
+        <input type="number" id="water-custom-input" placeholder="300" min="1" max="5000" step="50">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="addCustomWater()">Add Water 💧</button>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- Scripts -->
+  <script src="js/exercises.js"></script>
+  <script src="js/foods.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
+
