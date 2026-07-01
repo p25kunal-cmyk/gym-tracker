@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitforge-v1';
+const CACHE_NAME = 'fitforge-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -32,20 +32,24 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // For navigation requests (like launching the app), serve the cached root
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      caches.match('/')
+        .then((response) => {
+          return response || fetch(event.request);
+        })
+        .catch(() => {
+          return caches.match('/index.html');
+        })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Return cached version if found
-        if (response) {
-          return response;
-        }
-        // Otherwise try to fetch from network
-        return fetch(event.request).then((networkResponse) => {
-          // If we want to dynamically cache new resources, we could do it here
-          return networkResponse;
-        }).catch(() => {
-          // If network fails and it's not in cache, we could return a fallback
-        });
+        return response || fetch(event.request);
       })
   );
 });
